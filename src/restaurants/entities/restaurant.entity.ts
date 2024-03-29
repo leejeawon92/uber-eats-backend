@@ -5,8 +5,14 @@ export class Restaurant { // graphQL관점에서 본 restaurant가 어떻게 생
   @Field(type => String)
   name: string;
 
-  @Field(type => Boolean, { nullable: true })
-  isGood?: boolean;
+  @Field(type => Boolean)
+  isVegan: boolean;
+
+  @Field(type => String)
+  address: string;
+
+  @Field(type => String)
+  ownersName: string;
 }
 
 // entities는 데이터베이스의 모델이라고 생각하면 된다
