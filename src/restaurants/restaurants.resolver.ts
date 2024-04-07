@@ -2,6 +2,7 @@ import { Query, Resolver,Args, Mutation } from '@nestjs/graphql';
 import { Restaurant } from './entities/restaurant.entity';
 import { CreateRestaurantDto } from './dtos/create-restaurant.dto';
 import { RestaurantService } from './restaurants.service';
+import { UpdateRestaurantDto } from './dtos/update-restaurant.dto';
 
 @Resolver(of => Restaurant)
 export class RestaurantResolver {
@@ -20,6 +21,11 @@ export class RestaurantResolver {
       console.log(e);
       return false;
     }
+  }
+
+  @Mutation(returns => Boolean)
+  async updateRestaurant( @Args('input') updateRestaurantDto: UpdateRestaurantDto) {
+    return true;
   }
 
   // @Query(returns => Restaurant) // Restaurant를 return하고 Restaurant는 restaurant.entity.ts파일에서 만든 Object Type의 모양대로 들어갈 것이다.
