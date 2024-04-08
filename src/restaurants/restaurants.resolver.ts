@@ -24,10 +24,15 @@ export class RestaurantResolver {
   }
 
   @Mutation(returns => Boolean)
-  async updateRestaurant( @Args('input') updateRestaurantDto: UpdateRestaurantDto) {
-    return true;
+  async updateRestaurant( @Args('input') updateRestaurantDto: UpdateRestaurantDto): Promise<boolean> {
+    try {
+      await this.restaurantService.updateRestaurant(updateRestaurantDto);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   }
-
   // @Query(returns => Restaurant) // Restaurant를 return하고 Restaurant는 restaurant.entity.ts파일에서 만든 Object Type의 모양대로 들어갈 것이다.
   // myRestaurant() {
   //   return true;
