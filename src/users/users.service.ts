@@ -9,16 +9,15 @@ export class UserService {
   constructor( @InjectRepository(User) private readonly users: Repository<User>) {
   }
 
-  async createAccount({ email, password, role }: CreateAccountInput) {
+  async createAccount({ email, password, role}: CreateAccountInput): Promise<string | undefined> {
     try {
       const exists = await this.users.findOne({ where: { email } });
       if (exists) {
-        return;
+        return '이미 이메일이 존재합니다.';
       }
       await this.users.save(this.users.create({ email, password, role }));
-      return true;
     } catch (e) {
-      return;
+      return "계정을 생성할 수 없습니다.";
     }
   }
 }
