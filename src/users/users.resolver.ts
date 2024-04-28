@@ -6,16 +6,11 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { AuthUser } from 'src/auth/auth-user.decorator';
-
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 
 @Resolver(of => User)
 export class UserResolver {
   constructor(private readonly usersService: UserService) {}
-
-  @Query(returns => Boolean)
-  successcheck() {
-    return true;
-  }
 
   @Mutation(returns => CreateAccountOutput)
   async createAccount(@Args('input') createAccountInput: CreateAccountInput): Promise<CreateAccountOutput> {
@@ -60,4 +55,24 @@ export class UserResolver {
   //     return context.user;
   //   }
   // }
+
+  @UseGuards(AuthGuard)
+  @Query(returns => UserProfileOutput)
+  async userProfile( @Args() userProfileInput: UserProfileInput): Promise<UserProfileOutput> {
+    try {
+      const user = await this.usersService.findById(userProfileInput.userId);
+      if (!user) {
+        throw Error();
+      }
+      return {
+        ok: true,
+        user,
+      };
+    } catch (e) {
+      return {
+        error: '유저를 찾을 수 없습니다.',
+        ok: false,
+      };
+    }
+  }
 }
