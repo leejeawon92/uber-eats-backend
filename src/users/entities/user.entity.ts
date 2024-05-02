@@ -18,14 +18,22 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
+  
   @Column()
   @Field(type => String)
   password: string;
+
 
   @Column({ type: 'enum', enum: UserRole })
   @Field(type => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
+
+
+  @Column({ default: false })
+  @Field(type => Boolean)
+  verified: boolean;
+
 
   @BeforeInsert()
   @BeforeUpdate()
