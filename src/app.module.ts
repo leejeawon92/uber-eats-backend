@@ -1,17 +1,14 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
-import { RestaurantsModule } from './restaurants/restaurants.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
-import { AuthModule } from './auth/auth.module';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 
@@ -46,6 +43,7 @@ import { MailModule } from './mail/mail.module';
       entities: [User, Verification],
     }),
     GraphQLModule.forRoot({
+      driver: ApolloDriver,
       autoSchemaFile: true,
       context: ({ req }) => ({ user: req['user'] }),
     }),
