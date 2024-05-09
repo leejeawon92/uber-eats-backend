@@ -13,30 +13,17 @@ export class MailService {
 
   private async sendEmail(subject: string, content: string) {
     const form = new FormData();
-    form.append('from', `Excited User <mailgun@${this.options.domain}>`);
+    form.append('from', `Excited User <mailgun@${this.options.domain}`);  // `Excited User <mailgun@${this.options.domain}>
     form.append('to', `jeawon33333@naver.com`);
     form.append('subject', subject);
     form.append('text', content);
-    const response = await got(
-      `https://api.mailgun.net/v3/${this.options.domain}/messages`,
-      {
-        https: {
-          rejectUnauthorized: false,
-        },
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${Buffer.from(
-            `api:${this.options.apiKey}`,
-          ).toString('base64')}`,
-        },
-        body: form,
-      },
-    );
-    console.log(response); 
     
-    // return fetch(
+    // const response = await got(
     //   `https://api.mailgun.net/v3/${this.options.domain}/messages`,
     //   {
+    //     https: {
+    //       rejectUnauthorized: false,
+    //     },
     //     method: 'POST',
     //     headers: {
     //       Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
@@ -44,5 +31,17 @@ export class MailService {
     //     body: form,
     //   },
     // );
+    // console.log(response); 
+    
+    return fetch(
+      `https://api.mailgun.net/v3/${this.options.domain}/messages`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
+        },
+        body: form
+      },
+    );
   }
 }
