@@ -59,7 +59,21 @@ describe('UserService', () => {
   });
 
   describe('createAccount', () => {
-    it('사용자가 있을 경우 실패해야한다', () => {});
+    it('사용자가 있을 경우 실패해야한다', async () => {
+      usersRepository.findOne.mockResolvedValue({
+        id: 12,
+        email: 'jeawon33333@naver.com',
+      });
+      const result = await service.createAccount({
+        email: '',
+        password: '',
+        role: 0,
+      });
+      expect(result).toMatchObject({
+        ok: false,
+        error: '이미 이메일이 존재합니다.',
+      });
+    }); 
   });
   it.todo('login');
   it.todo('findById');
