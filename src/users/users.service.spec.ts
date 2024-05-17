@@ -6,6 +6,7 @@ import { MailService } from 'src/mail/mail.service';
 import { User } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 import { Repository } from 'typeorm';
+import { exec } from 'child_process';
 
 const mockRepository= () => ({
   findOne: jest.fn(),
@@ -117,8 +118,35 @@ describe('UserService', () => {
       );
       expect(result).toEqual({ ok: true });
     });
+
+    it('예외적으로 실패해야 한다', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createAccount(createAccountArgs);
+      expect(result).toEqual({ ok: false, error: "계정을 생성할 수 없습니다."});
+    });
   });
-  it.todo('login');
+
+  describe('login', () => {
+    const loginArgs = {
+      email: 'jeawon33333@naver.com',
+      password: '123467',
+    };
+    it('사용자가 존재하지 않으면 실패해야 한다', async () => {
+      usersRepository.findOne.mockResolvedValue(null);
+
+      const result = await service.login(loginArgs);
+
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepository.findOne).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Object),
+      );
+      expect(result).toEqual({
+        ok: false,
+        error: '유저를 찾을 수 없다',
+      });
+    });
+  });
   it.todo('findById');
   it.todo('editProfile');
   it.todo('verifyEmail');
