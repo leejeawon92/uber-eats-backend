@@ -164,7 +164,6 @@ describe('UserService', () => {
       };
       usersRepository.findOne.mockResolvedValue(mockedUser);
       const result = await service.login(loginArgs);
-      console.log(result);
       expect(jwtService.sign).toHaveBeenCalledTimes(1);
       expect(jwtService.sign).toHaveBeenCalledWith(expect.any(Number));
       expect(result).toEqual({ ok: true, token: 'signed-token-baby' });
