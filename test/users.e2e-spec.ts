@@ -4,6 +4,12 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { DataSource } from 'typeorm';
 
+jest.mock('got', () => {
+  return {
+    post: jest.fn(),
+  };
+});
+
 const GRAPHQL_ENDPOINT = '/graphql';
 
 describe('UserModule (e2e)', () => {
@@ -56,6 +62,32 @@ describe('UserModule (e2e)', () => {
         .expect(res => {
           expect(res.body.data.createAccount.ok).toBe(true);
           expect(res.body.data.createAccount.error).toBe(null);
+        });
+    });
+
+    it('계정이 이미 있는 경우 실패해야한다.', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+          mutation {
+            createAccount(input: {
+              email:"${EMAIL}",
+              password:"12345",
+              role:Owner
+            }) {
+              ok
+              error
+            }
+          }
+        `,
+        })
+        .expect(200)
+        .expect(res => {
+          expect(res.body.data.createAccount.ok).toBe(false);
+          expect(res.body.data.createAccount.error).toBe(
+            '이미 이메일이 존재합니다.',
+          );
         });
     });
   });
