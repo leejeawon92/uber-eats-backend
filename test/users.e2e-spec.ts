@@ -288,4 +288,62 @@ describe('UserModule (e2e)', () => {
     });
   });
 
+  describe('editProfile', () => {
+    const NEW_EMAIL = 'jeawon33333@naver.com';
+    it('이메일을 변경해야 한다.', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+            mutation {
+              editProfile(input:{
+                email: "${NEW_EMAIL}"
+              }) {
+                ok
+                error
+              }
+            }
+        `,
+        })
+        .expect(200)
+        .expect(res => {
+          const {
+            body: {
+              data: {
+                editProfile: { ok, error },
+              },
+            },
+          } = res;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+    it('새로운 이메일이 있어야 한다.', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+          {
+            me {
+              email
+            }
+          }
+        `,
+        })
+        .expect(200)
+        .expect(res => {
+          const {
+            body: {
+              data: {
+                me: { email },
+              },
+            },
+          } = res;
+          expect(email).toBe(NEW_EMAIL);
+        });
+    });
+  });
+
 });
