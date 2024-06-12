@@ -5,6 +5,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { CreateRestaurantInput, CreateRestaurantOutput } from './dtos/create-restaurant.dto';
 import { User } from 'src/users/entities/user.entity';
 import { Category } from './entities/cetegory.entity';
+import { EditRestaurantInput, EditRestaurantOutput } from './dtos/edit-restaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -38,6 +39,10 @@ export class RestaurantService {
           error: '레스토랑을 생성할 수 없습니다.',
         };
       }
+  }
+
+  async editRestaurant( owner: User, editRestaurantInput: EditRestaurantInput): Promise<EditRestaurantOutput> {
+    
   }
 
 }
