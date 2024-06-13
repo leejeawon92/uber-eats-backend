@@ -14,20 +14,27 @@ export class RestaurantService {
     @InjectRepository(Category) private readonly categories: Repository<Category>,
   ) {}
 
+  async getOrCreateCategory(name: string): Promise<Category> {
+    const categoryName = name.trim().toLowerCase();
+    const categorySlug = categoryName.replace(/ /g, '-');
+    let category = await this.categories.findOne({where: { slug: categorySlug }});
+    if (!category) {
+      category = await this.categories.save(
+        this.categories.create({ slug: categorySlug, name: categoryName }),
+      );
+    }
+    return category;
+  }
+
   async createRestaurant(
     owner: User,
     createRestaurantInput: CreateRestaurantInput): Promise<CreateRestaurantOutput> {
       try {
         const newRestaurant = this.restaurants.create(createRestaurantInput);
         newRestaurant.owner = owner;
-        const categoryName = createRestaurantInput.categoryName.trim().toLowerCase();  // 공백삭제+소문자
-        const categorySlug = categoryName.replace(/ /g, '-');
-        let category = await this.categories.findOne({where: { slug: categorySlug }});
-        if (!category) {
-          category = await this.categories.save(
-            this.categories.create({ slug: categorySlug, name: categoryName }),
-          );
-        }
+        const category = await this.getOrCreateCategory(
+          createRestaurantInput.categoryName,
+        );
         newRestaurant.category = category;
         await this.restaurants.save(newRestaurant);
         return {
@@ -41,8 +48,34 @@ export class RestaurantService {
       }
   }
 
-  async editRestaurant( owner: User, editRestaurantInput: EditRestaurantInput): Promise<EditRestaurantOutput> {
-    
-  }
+  async editRestaurant(
+    owner: User,
+    editRestaurantInput: EditRestaurantInput,
+  ): Promise<EditRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({where : {id : editRestaurantInput.restaurantId}})
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "owner가 아니면 레스토랑을 수정할 수 없습니다.",
+        };
+      }
 
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: '레스토랑을 수정 할 수 없습니다.',
+      };
+    }
+  }
 }
+
