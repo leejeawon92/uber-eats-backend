@@ -1,4 +1,4 @@
-import { Resolver,Args, Mutation, ResolveField, Int,Query } from '@nestjs/graphql';
+import { Resolver,Args, Mutation, ResolveField, Int,Query,Parent } from '@nestjs/graphql';
 import { Restaurant } from './entities/restaurant.entity';
 import { CreateRestaurantInput, CreateRestaurantOutput } from './dtos/create-restaurant.dto';
 import { RestaurantService } from './restaurants.service';
@@ -50,8 +50,8 @@ export class CategoryResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @ResolveField(type => Int)
-  restaurantCount(): number {
-    return 80;
+  restaurantCount(@Parent() category: Category): Promise<number> {
+    return this.restaurantService.countRestaurants(category);
   }
 
   @Query(type => AllCategoriesOutput)
