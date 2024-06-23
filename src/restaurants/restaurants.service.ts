@@ -5,7 +5,7 @@ import { CreateRestaurantInput, CreateRestaurantOutput } from './dtos/create-res
 import { User } from 'src/users/entities/user.entity';
 import { Category } from './entities/cetegory.entity';
 import { EditRestaurantInput, EditRestaurantOutput } from './dtos/edit-restaurant.dto';
-import { Like, Repository } from 'typeorm';
+import { Like, Raw, Repository } from 'typeorm';
 import { CategoryRepository } from './repositories/category.repository';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
@@ -215,9 +215,15 @@ export class RestaurantService {
     try {
       const [restaurants, totalResults] = await this.restaurants.findAndCount({
         where: {
-          name: Like(`%${query}%`),
+          name: Raw(name => `${name} ILIKE '%${query}%'`),
         },
       });
+      return {
+        ok: true,
+        restaurants,
+        totalResults,
+        totalPages: Math.ceil(totalResults / 25),
+      };
     } catch {
       return { ok: false, error: 'Could not search for restaurants' };
     }
