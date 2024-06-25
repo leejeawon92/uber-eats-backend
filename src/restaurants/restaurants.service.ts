@@ -12,6 +12,7 @@ import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import { RestaurantInput, RestaurantOutput, RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 import { SearchRestaurantInput, SearchRestaurantOutput } from './dtos/search-restaurant.dto';
+import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
 
 
 @Injectable()
@@ -227,6 +228,12 @@ export class RestaurantService {
     } catch {
       return { ok: false, error: 'Could not search for restaurants' };
     }
+  }
+
+  async createDish( owner: User, createDishInput: CreateDishInput): Promise<CreateDishOutput> {
+    return {
+      ok: false,
+    };
   }
 }
 
