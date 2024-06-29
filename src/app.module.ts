@@ -16,7 +16,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { AuthModule } from './auth/auth.module';
 import { Dish } from './restaurants/entities/dish.entity';
 import { Order } from './orders/entities/order.entity';
-import { OrdersModule } from './orders/entities/orders.module';
+import { OrdersModule } from './orders/orders.module';
 
 
 @Module({
