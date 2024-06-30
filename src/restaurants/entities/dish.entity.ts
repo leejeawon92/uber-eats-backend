@@ -15,7 +15,7 @@ class DishChoice {
 
 @InputType('DishOptionInputType', { isAbstract: true })
 @ObjectType()
-class DishOption {
+export class DishOption {
   @Field(type => [DishChoice], { nullable: true })
   choices?: DishChoice[];
   @Field(type => Int, { nullable: true })
