@@ -39,4 +39,13 @@ export class OrderResolver {
     return this.ordersService.getOrder(user, getOrderInput);
   }
 
+  @Mutation(returns => EditOrderOutput)
+  @Role(['Any'])
+  async editOrder(
+    @AuthUser() user: User,
+    @Args('input') editOrderInput: EditOrderInput,
+  ): Promise<EditOrderOutput> {
+    return this.ordersService.editOrder(user, editOrderInput);
+  }
+
 }
