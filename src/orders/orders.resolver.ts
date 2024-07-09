@@ -52,7 +52,7 @@ export class OrderResolver {
   }
 
   @Mutation(returns => Boolean)
-  potatoReady() {
+  testR() {
     pubsub.publish('test', {
       test: 'test123',
     });
@@ -60,7 +60,9 @@ export class OrderResolver {
   }
 
   @Subscription(returns => String)
-  test() {
+  @Role(['Any'])
+  testT(@AuthUser() user: User) {
+    console.log(user);
     return pubsub.asyncIterator('test');
   }
 
