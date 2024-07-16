@@ -20,7 +20,7 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
 import { Payment } from './payments/entities/payment.entity';
-import { PaymentsModule } from './payments/entities/payments.module';
+import { PaymentsModule } from './payments/payments.module';
 
 
 @Module({
