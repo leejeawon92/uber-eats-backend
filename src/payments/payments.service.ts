@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { Payment } from './entities/payment.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -41,6 +41,11 @@ export class PaymentService {
           restaurant,
         }),
       );
+      restaurant.isPromoted = true;
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      restaurant.promotedUntil = date;
+      this.restaurants.save(restaurant);
       return {
         ok: true,
       };
@@ -64,22 +69,15 @@ export class PaymentService {
     }
   }
 
-  @Cron('30 * * * * *', {
-    name: 'myJob',
-  })
-  checkForPayments() {
-    console.log('Checking for payments....(cron)');
-    const job = this.schedulerRegistry.getCronJob('myJob');
-    job.stop();
-  }
-
-  @Interval(5000)
-  checkForPaymentsI() {
-    console.log('Checking for payments....(interval)');
-  }
-
-  @Timeout(20000)
-  afterStarts() {
-    console.log('Congrats!');
+  
+  @Interval(2000)
+  async checkPromotedRestaurants() {
+    const restaurants = await this.restaurants.find({ where :{isPromoted: true, promotedUntil:LessThan(new Date())}});
+    console.log(restaurants);
+    restaurants.forEach(async restaurant => {
+      restaurant.isPromoted = false;
+      restaurant.promotedUntil = null;
+      await this.restaurants.save(restaurant);
+    });
   }
 }
